@@ -4,6 +4,12 @@ description: Robotic arm control with any number of joints using genetic algorit
 image: https://storage.googleapis.com/atta-images/docs/robotic-arm-ga/robotic-arm-ga.gif
 build: https://storage.googleapis.com/atta-repos/robotic-arm-ga
 -->
+# Robotic Arm GA
+
+<div align="center">
+  <img src="https://storage.googleapis.com/atta-images/docs/robotic-arm-ga/robotic-arm-ga.gif" height="400">
+</div>
+
 ## Introduction
 This project aims to control a robot arm with an arbitrary number of joints using genetic algorithms.
 Today it is possible to change the number of joints and the accuracy of movement.
