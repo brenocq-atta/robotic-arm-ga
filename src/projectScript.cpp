@@ -26,31 +26,60 @@ void Project::onStop() {
     clear();
 }
 
-void Project::onUpdateBefore(float dt) { updateArm(armPrototype); }
+void Project::onUpdateBefore(float dt) {
+    for (cmp::Entity arm : _arms)
+        updateArm(arm);
+}
 
 void Project::onUIRender() {
     ImGui::Begin("Configuration");
-    int number = 0;
-    if (!_running) {
+    {
+        ImGui::Text("Population size");
+        if (ImGui::DragInt("##Population size", &config.get<ConfigComponent>()->populationSize, 1, 1, 50) && _running) {
+            clear();
+            init();
+        }
         ImGui::Text("Number of joints");
-        ImGui::DragInt("##Number of joints", &config.get<ConfigComponent>()->numJoints, 1, 0, 10);
+        if (ImGui::DragInt("##Number of joints", &config.get<ConfigComponent>()->numJoints, 1, 0, 10) && _running) {
+            clear();
+            init();
+        }
     }
     ImGui::End();
 }
 
-void Project::init() { createArm(armPrototype); }
+void Project::init() {
+    const int populationSize = config.get<ConfigComponent>()->populationSize;
+    for (int i = 0; i < populationSize; i++)
+        _arms.push_back(createArm());
+}
 
 void Project::clear() {
     // Delete all joints
-    for (cmp::Entity entity : _toDelete)
-        cmp::deleteEntity(entity);
-    _toDelete.clear();
+    for (cmp::Entity arm : _arms)
+        cmp::deleteEntity(arm);
+    _arms.clear();
 }
 
-void Project::createArm(cmp::Entity arm) {
+cmp::Entity Project::createArm() {
     const int numJoints = config.get<ConfigComponent>()->numJoints;
 
-    cmp::Entity parent = arm;
+    // Create root
+    cmp::Entity root = cmp::createEntity();
+    root.add<cmp::Transform>();
+    root.add<cmp::Name>()->set("Robotic arm");
+    root.add<ArmComponent>();
+    root.add<cmp::Relationship>();
+
+    // Create base
+    cmp::Entity base = cmp::createEntity();
+    base.add<cmp::Transform>();
+    base.add<cmp::Mesh>()->set("base.stl");
+    base.add<cmp::Name>()->set("Base");
+    base.add<cmp::Material>()->set("Orange");
+    base.add<cmp::Relationship>()->setParent(root, base);
+
+    cmp::Entity parent = root;
     for (int i = 0; i < numJoints; i++) {
         // Create joint
         cmp::Entity joint = cmp::createEntity();
@@ -59,13 +88,8 @@ void Project::createArm(cmp::Entity arm) {
         if (i == 0)
             joint.add<cmp::Transform>()->position.z = 0.05;
         else {
-            if (i % 2) {
-                joint.add<cmp::Transform>()->position.z = ConfigComponent::armLength;
-                joint.get<cmp::Transform>()->orientation.rotateAroundAxis(atta::vec3(0, 1, 0), M_PI / 2);
-            } else {
-                joint.add<cmp::Transform>()->position.x = ConfigComponent::armLength;
-                joint.get<cmp::Transform>()->orientation.rotateAroundAxis(atta::vec3(0, 1, 0), -M_PI / 2);
-            }
+            joint.add<cmp::Transform>()->position[i == 1 ? 2 : 0] = ConfigComponent::armLength;
+            joint.get<cmp::Transform>()->orientation.fromEuler({i > 1 ? pi/2 : 0.0f, i == 1 ? pi/2 : 0.0f, 0.0f});
         }
         joint.add<cmp::Mesh>()->set("joint.stl");
         joint.add<cmp::Material>()->set("Gray");
@@ -74,36 +98,25 @@ void Project::createArm(cmp::Entity arm) {
         cmp::Entity arm = cmp::createEntity();
         arm.add<cmp::Relationship>()->setParent(joint, arm);
         arm.add<cmp::Name>()->set("Arm " + std::to_string(i));
-        if (i % 2) {
-            arm.add<cmp::Transform>()->position.x = ConfigComponent::armLength / 2;
+        arm.add<cmp::Transform>()->position[i == 0 ? 2 : 0] = ConfigComponent::armLength / 2;
+        if (i != 0)
             arm.get<cmp::Transform>()->orientation.rotateAroundAxis(atta::vec3(0, 1, 0), M_PI / 2);
-        } else
-            arm.add<cmp::Transform>()->position.z = ConfigComponent::armLength / 2;
-
         arm.add<cmp::Mesh>()->set("arm.stl");
         arm.add<cmp::Material>()->set("Orange");
 
-        // Hand
-        if(i == numJoints-1)
-        {
-            cmp::Entity hand = cmp::createEntity();
-            hand.add<cmp::Relationship>()->setParent(joint, hand);
-            hand.add<cmp::Name>()->set("Hand");
-            if (i % 2)
-                hand.add<cmp::Transform>()->position.x = ConfigComponent::armLength;
-            else
-                hand.add<cmp::Transform>()->position.z = ConfigComponent::armLength;
-            hand.get<cmp::Transform>()->scale = atta::vec3(0.15f);
-
-
-            hand.add<cmp::Mesh>()->set("meshes/sphere.obj");
-            hand.add<cmp::Material>()->set("Red");
-        }
-
-        if (i == 0) // When parent entity is deleted, children are deleted
-            _toDelete.push_back(joint);
         parent = joint;
     }
+
+    // Hand
+    cmp::Entity hand = cmp::createEntity();
+    hand.add<cmp::Relationship>()->setParent(parent, hand);
+    hand.add<cmp::Name>()->set("Hand");
+    hand.add<cmp::Transform>()->position.x = ConfigComponent::armLength;
+    hand.get<cmp::Transform>()->scale = atta::vec3(0.15f);
+    hand.add<cmp::Mesh>()->set("meshes/sphere.obj");
+    hand.add<cmp::Material>()->set("Red");
+
+    return root;
 }
 
 void Project::updateArm(cmp::Entity arm) {
@@ -116,9 +129,8 @@ void Project::updateArm(cmp::Entity arm) {
 
         atta::quat ori{};
         ori.rotateAroundAxis(atta::vec3(0, 0, 1), gene[i]);
-        if (i != 0)
-            ori.rotateAroundAxis(atta::vec3(0, 1, 0), M_PI / 2 * (i % 2 ? 1 : -1));
-
+        ori.rotateAroundAxis(atta::vec3(1, 0, 0), i > 1 ? pi/2 : 0.0f);
+        ori.rotateAroundAxis(atta::vec3(0, 1, 0), i == 1 ? pi/2 : 0.0f);
         joint.get<cmp::Transform>()->orientation = ori;
         parent = joint;
     }

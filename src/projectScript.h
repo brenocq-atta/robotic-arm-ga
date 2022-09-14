@@ -23,11 +23,11 @@ class Project : public atta::script::ProjectScript {
   private:
     void init();
     void clear();
-    void createArm(cmp::Entity arm);
+    cmp::Entity createArm();
     void updateArm(cmp::Entity arm);
 
     bool _running;
-    std::vector<cmp::Entity> _toDelete;
+    std::vector<cmp::Entity> _arms;
 };
 
 ATTA_REGISTER_PROJECT_SCRIPT(Project)

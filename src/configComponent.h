@@ -12,7 +12,9 @@ namespace cmp = atta::component;
 
 struct ConfigComponent final : public cmp::Component {
     /// Number of joints
-    int numJoints = 3;
+    int numJoints = 6;
+    /// Size of population
+    int populationSize = 5;
     /// Mutation
     float mutation = 0.05;
     /// Arm length

@@ -11,7 +11,7 @@
 namespace cmp = atta::component;
 
 const cmp::Entity goal(4);
-const cmp::Entity armPrototype(2);
 const cmp::Entity config(5);
+constexpr float pi = M_PI;
 
 #endif // COMMON_H
