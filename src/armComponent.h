@@ -17,7 +17,7 @@ struct ArmComponent final : public cmp::Component {
 
     // Arm gene
     /** Angle of each joint **/
-    float gene[10];
+    float gene[20];
 };
 ATTA_REGISTER_COMPONENT(ArmComponent);
 template <>

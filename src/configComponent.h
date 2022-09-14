@@ -17,8 +17,11 @@ struct ConfigComponent final : public cmp::Component {
     int populationSize = 5;
     /// Mutation
     float mutation = 0.05;
-    /// Arm length
+
+    // Arm parameters
     static constexpr float armLength = 0.4;
+    static constexpr float minAngle = -2/3.0f*M_PI;
+    static constexpr float maxAngle = 2/3.0f*M_PI;
 };
 ATTA_REGISTER_COMPONENT(ConfigComponent);
 template <>

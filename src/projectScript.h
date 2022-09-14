@@ -24,7 +24,8 @@ class Project : public atta::script::ProjectScript {
     void init();
     void clear();
     cmp::Entity createArm();
-    void updateArm(cmp::Entity arm);
+    void updateArmJoints(cmp::Entity arm);
+    void evolve();
 
     bool _running;
     std::vector<cmp::Entity> _arms;
