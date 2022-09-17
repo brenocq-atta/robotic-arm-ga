@@ -98,7 +98,7 @@ cmp::Entity Project::createArm() {
             joint.add<cmp::Transform>()->position.z = 0.05;
         else {
             joint.add<cmp::Transform>()->position[i == 1 ? 2 : 0] = ConfigComponent::armLength;
-            joint.get<cmp::Transform>()->orientation.fromEuler({i > 1 ? pi / 2 : 0.0f, i == 1 ? pi / 2 : 0.0f, 0.0f});
+            joint.get<cmp::Transform>()->orientation.setEuler({i > 1 ? pi / 2 : 0.0f, i == 1 ? pi / 2 : 0.0f, 0.0f});
         }
         joint.add<cmp::Mesh>()->set("joint.stl");
         joint.add<cmp::Material>()->set("Gray");

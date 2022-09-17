@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 project(robotic-arm-ga VERSION 1.0.0 LANGUAGES CXX)
-find_package(atta 0.1.0.0 REQUIRED)
+find_package(atta 0.2.0.0 REQUIRED)
 
 atta_add_target(config_component "src/configComponent.cpp")
 atta_add_target(arm_component "src/armComponent.cpp")
