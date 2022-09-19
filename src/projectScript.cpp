@@ -16,6 +16,11 @@
 
 void Project::onLoad() { _running = false; }
 
+void Project::onUnload() {
+    _running = false;
+    clear();
+}
+
 void Project::onStart() {
     _running = true;
     init();
@@ -151,6 +156,9 @@ void Project::evolve() {
     const int numJoints = config.get<ConfigComponent>()->numJoints;
     const float mutation = config.get<ConfigComponent>()->mutation;
     std::vector<float> fitness;
+
+    if(_arms.empty())
+        return;
 
     for (cmp::Entity arm : _arms) {
         // Get hand

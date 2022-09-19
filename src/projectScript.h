@@ -6,13 +6,13 @@
 //--------------------------------------------------
 #ifndef PROJECT_SCRIPT_H
 #define PROJECT_SCRIPT_H
-#include <atta/pch.h>
 #include <atta/script/projectScript.h>
 #include "common.h"
 
 class Project : public atta::script::ProjectScript {
   public:
     void onLoad() override;
+    void onUnload() override;
 
     void onStart() override;
     void onStop() override;
