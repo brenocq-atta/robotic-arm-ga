@@ -38,8 +38,8 @@ void Project::onUpdateBefore(float dt) {
     for (cmp::Entity arm : _arms)
         updateArmJoints(arm);
 
-    if (time > 1.0f)
-        evolve();
+    // if (time > 1.0f)
+    //     evolve();
 }
 
 void Project::onUIRender() {
@@ -82,7 +82,7 @@ cmp::Entity Project::createArm() {
     auto& gene = root.add<ArmComponent>()->gene;
     for (int i = 0; i < numJoints; i++) {
         float r = rand() / float(RAND_MAX);
-        gene[i] = r * (ConfigComponent::maxAngle - ConfigComponent::minAngle) + ConfigComponent::minAngle;
+        gene[i] = 0.0f;//r * (ConfigComponent::maxAngle - ConfigComponent::minAngle) + ConfigComponent::minAngle;
     }
 
     // Create base
