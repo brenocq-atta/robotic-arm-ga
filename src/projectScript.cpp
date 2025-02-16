@@ -166,7 +166,7 @@ void Project::evolve() {
         for (int i = 0; i < numJoints + 1; i++)
             hand = hand.get<cmp::Relationship>()->getChildren()[1];
         // Calculate dist to goal
-        atta::vec3 dist = goal.get<cmp::Transform>()->position - hand.get<cmp::Transform>()->getWorldTransform(hand).getPosition();
+        atta::vec3 dist = goal.get<cmp::Transform>()->position - hand.get<cmp::Transform>()->getWorldTransform(hand).position;
         fitness.push_back(dist.length());
     }
 
