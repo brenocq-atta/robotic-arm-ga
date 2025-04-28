@@ -35,11 +35,11 @@ void Project::onUpdateBefore(float dt) {
     static float time = 0;
     time += dt;
 
-    // for (cmp::Entity arm : _arms)
-    //     updateArmJoints(arm);
+    for (cmp::Entity arm : _arms)
+        updateArmJoints(arm);
 
-    // if (time > 1.0f)
-    //     evolve();
+    if (time > 1.0f)
+        evolve();
 }
 
 void Project::onUIRender() {
@@ -147,11 +147,9 @@ void Project::updateArmJoints(cmp::Entity arm) {
         cmp::Entity joint = parent.get<cmp::Relationship>()->getChildren()[1]; // Get joint
 
         atta::quat ori{};
+        if (i > 0)
+            ori.rotateAroundAxis(atta::vec3(0, 1, 0), i % 2 ? -pi / 2 : pi / 2);
         ori.rotateAroundAxis(atta::vec3(0, 0, 1), gene[i]);
-        if (i > 1)
-            ori.rotateAroundAxis(atta::vec3(1, 0, 0), pi / 2);
-        else if (i == 1)
-            ori.rotateAroundAxis(atta::vec3(0, 1, 0), pi / 2);
         joint.get<cmp::Transform>()->orientation = ori;
         parent = joint;
     }
