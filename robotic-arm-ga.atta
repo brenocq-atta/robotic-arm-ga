@@ -1,10 +1,10 @@
 [project]
-attaVersion = "0.3.9"
+attaVersion = "0.3.10"
 name = "robotic-arm-ga"
 
 [config]
 dt = 0.015000
-desiredStepSpeed = 1.000000
+desiredStepSpeed = 0.337719
 
 [graphics]
 graphicsFPS = 30.000000
@@ -51,9 +51,9 @@ color = vec3(0.153000, 0.163000, 0.158000)
 name = "Main Viewport"
 renderer.type = "PbrRenderer"
 camera.type = "PerspectiveCamera"
-camera.position = vec3(3.633866, -0.122130, 4.168246)
-camera.lookAt = vec3(2.905524, -0.119069, 3.483038)
-camera.up = vec3(-0.685202, 0.002879, 0.728348)
+camera.position = vec3(3.639187, -0.172023, 3.741988)
+camera.lookAt = vec3(2.910680, -0.165367, 3.056982)
+camera.up = vec3(-0.684977, 0.006258, 0.728538)
 
 [node]
 id = 0
@@ -76,8 +76,8 @@ transform.scale = vec3(0.200000, 0.200000, 0.200000)
 [node]
 id = 2
 name.name = "Config"
-config.numJoints = 5
-config.populationSize = 1
+config.numJoints = 8
+config.populationSize = 5
 config.mutation = 0.050000
 
 [node]

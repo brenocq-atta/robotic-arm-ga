@@ -37,9 +37,7 @@ void Project::onUpdateBefore(float dt) {
 
     for (cmp::Entity arm : _arms)
         updateArmJoints(arm);
-
-    if (time > 1.0f)
-        evolve();
+    evolve();
 }
 
 void Project::onUIRender() {
