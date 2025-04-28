@@ -6,8 +6,6 @@
 //--------------------------------------------------
 #include "armComponent.h"
 
-namespace cmp = atta::component;
-
 template <>
 cmp::ComponentDescription& cmp::TypedComponentRegistry<ArmComponent>::getDescription() {
     static cmp::ComponentDescription desc = {
@@ -18,16 +16,6 @@ cmp::ComponentDescription& cmp::TypedComponentRegistry<ArmComponent>::getDescrip
         },
         // Max instances
         1024,
-        // Serialize
-        {{"gene",
-          [](std::ostream& os, void* data) {
-              // Do not serialize gene
-          }}},
-        // Deserialize
-        {{"gene",
-          [](std::istream& is, void* data) {
-              // Do not deserialize gene
-          }}},
     };
 
     return desc;

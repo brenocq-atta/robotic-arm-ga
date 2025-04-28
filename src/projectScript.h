@@ -6,10 +6,10 @@
 //--------------------------------------------------
 #ifndef PROJECT_SCRIPT_H
 #define PROJECT_SCRIPT_H
-#include <atta/script/projectScript.h>
 #include "common.h"
+#include <atta/script/projectScript.h>
 
-class Project : public atta::script::ProjectScript {
+class Project : public scr::ProjectScript {
   public:
     void onLoad() override;
     void onUnload() override;

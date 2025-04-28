@@ -8,8 +8,6 @@
 #define ARM_COMPONENT_H
 #include <atta/component/interface.h>
 
-namespace cmp = atta::component;
-
 struct ArmComponent final : public cmp::Component {
     /// Arm fitness
     /** Distance from goal **/

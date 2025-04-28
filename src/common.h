@@ -8,10 +8,8 @@
 #define COMMON_H
 #include <atta/component/interface.h>
 
-namespace cmp = atta::component;
-
-const cmp::Entity goal(4);
-const cmp::Entity config(5);
+const cmp::Entity goal(1);
+const cmp::Entity config(2);
 constexpr float pi = M_PI;
 
 #endif // COMMON_H

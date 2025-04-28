@@ -35,8 +35,8 @@ void Project::onUpdateBefore(float dt) {
     static float time = 0;
     time += dt;
 
-    for (cmp::Entity arm : _arms)
-        updateArmJoints(arm);
+    // for (cmp::Entity arm : _arms)
+    //     updateArmJoints(arm);
 
     // if (time > 1.0f)
     //     evolve();
@@ -82,7 +82,7 @@ cmp::Entity Project::createArm() {
     auto& gene = root.add<ArmComponent>()->gene;
     for (int i = 0; i < numJoints; i++) {
         float r = rand() / float(RAND_MAX);
-        gene[i] = 0.0f;//r * (ConfigComponent::maxAngle - ConfigComponent::minAngle) + ConfigComponent::minAngle;
+        gene[i] = r * (ConfigComponent::maxAngle - ConfigComponent::minAngle) + ConfigComponent::minAngle;
     }
 
     // Create base
@@ -99,11 +99,16 @@ cmp::Entity Project::createArm() {
         cmp::Entity joint = cmp::createEntity();
         joint.add<cmp::Relationship>()->setParent(parent, joint);
         joint.add<cmp::Name>()->set("Joint " + std::to_string(i));
+        int jointRotAxis = i % 2 == 0 ? 2 : 0; // The joint should rotate around X or Z
+        int jointArmAxis = jointRotAxis == 0 ? 2 : 0;
         if (i == 0)
             joint.add<cmp::Transform>()->position.z = 0.05;
         else {
-            joint.add<cmp::Transform>()->position[i == 1 ? 2 : 0] = ConfigComponent::armLength;
-            joint.get<cmp::Transform>()->orientation.setEuler({i > 1 ? pi / 2 : 0.0f, i == 1 ? pi / 2 : 0.0f, 0.0f});
+            joint.add<cmp::Transform>()->position[jointArmAxis] = ConfigComponent::armLength;
+            if (i % 2)
+                joint.get<cmp::Transform>()->orientation.rotateAroundAxis(atta::vec3(0, 1, 0), -pi / 2);
+            else
+                joint.get<cmp::Transform>()->orientation.rotateAroundAxis(atta::vec3(0, 1, 0), pi / 2);
         }
         joint.add<cmp::Mesh>()->set("joint.stl");
         joint.add<cmp::Material>()->set("Gray");
@@ -112,9 +117,9 @@ cmp::Entity Project::createArm() {
         cmp::Entity arm = cmp::createEntity();
         arm.add<cmp::Relationship>()->setParent(joint, arm);
         arm.add<cmp::Name>()->set("Arm " + std::to_string(i));
-        arm.add<cmp::Transform>()->position[i == 0 ? 2 : 0] = ConfigComponent::armLength / 2;
-        if (i != 0)
-            arm.get<cmp::Transform>()->orientation.rotateAroundAxis(atta::vec3(0, 1, 0), M_PI / 2);
+        arm.add<cmp::Transform>()->position[jointRotAxis] = ConfigComponent::armLength / 2;
+        if (i % 2)
+            arm.get<cmp::Transform>()->orientation.rotateAroundAxis(atta::vec3(0, 1, 0), pi / 2);
         arm.add<cmp::Mesh>()->set("arm.stl");
         arm.add<cmp::Material>()->set("Orange");
 
@@ -125,7 +130,7 @@ cmp::Entity Project::createArm() {
     cmp::Entity hand = cmp::createEntity();
     hand.add<cmp::Relationship>()->setParent(parent, hand);
     hand.add<cmp::Name>()->set("Hand");
-    hand.add<cmp::Transform>()->position[numJoints > 1 ? 0 : 2] = ConfigComponent::armLength;
+    hand.add<cmp::Transform>()->position[numJoints % 2 ? 2 : 0] = ConfigComponent::armLength;
     hand.get<cmp::Transform>()->scale = atta::vec3(0.15f);
     hand.add<cmp::Mesh>()->set("meshes/sphere.obj");
     hand.add<cmp::Material>()->set("Red");
@@ -157,7 +162,7 @@ void Project::evolve() {
     const float mutation = config.get<ConfigComponent>()->mutation;
     std::vector<float> fitness;
 
-    if(_arms.empty())
+    if (_arms.empty())
         return;
 
     for (cmp::Entity arm : _arms) {
